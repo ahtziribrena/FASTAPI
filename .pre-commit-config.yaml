@@ -1,0 +1,19 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: trailing-whitespace  # Elimina espacios en blanco al final de las líneas
+      - id: end-of-file-fixer    # Asegura que los archivos terminan con una línea en blanco
+      - id: check-yaml           # Valida la sintaxis de archivos YAML
+      - id: check-added-large-files  # Avisa si se añaden archivos grandes al repo
+
+  - repo: https://github.com/psf/black
+    rev: 23.7.0
+    hooks:
+      - id: black  # Formatea el código Python automáticamente
+
+  - repo: https://github.com/PyCQA/flake8
+    rev: 7.1.1
+    hooks:
+      - id: flake8  # Analiza el código Python para detectar errores y problemas de estilo
+        args: ["--max-line-length=85"]

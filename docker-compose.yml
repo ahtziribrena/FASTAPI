@@ -1,0 +1,32 @@
+services:
+  database:
+    build:
+      context: postgres
+      target: database
+    container_name: database
+    env_file:
+      - ./postgres/database.env
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d nes_db']
+      interval: 5s
+      timeout: 60s
+      retries: 5
+      start_period: 5s
+    ports:
+      - 5434:5432
+    profiles:
+      - dev
+
+  proyecto:
+    build:
+      context: ./FastApi
+      dockerfile: Dockerfile
+    container_name: FastApi
+    depends_on:
+      - database
+    env_file:
+      - ./FastApi/proyecto.env
+    volumes:
+      - ./FastApi/proyecto:/app/proyecto
+    ports:
+      - 8000:8000
