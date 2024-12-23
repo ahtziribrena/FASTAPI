@@ -27,6 +27,6 @@ services:
     env_file:
       - ./FastApi/proyecto.env
     volumes:
-      - ./FastApi/proyecto:/app/proyecto
+      - ./FastApi/backend:/app/backend
     ports:
       - 8000:8000
