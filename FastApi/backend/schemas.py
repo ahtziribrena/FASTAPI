@@ -13,14 +13,12 @@ class FichaBase(BaseModel):
     ciclo_id: int
     carrera_id: int
     configuracion_aspirante_id: Optional[int] = None  # Permite que sea None (NULL en la base de datos)
-
+    created_at: datetime
+    updated_at: datetime
 class FichaCreate(FichaBase):
     pass
 
 class Ficha(FichaBase):
     id: int
-    created_at: datetime
-    updated_at: datetime
-
     class Config:
         orm_mode = True

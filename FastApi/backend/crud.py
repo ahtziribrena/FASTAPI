@@ -18,6 +18,8 @@ def create_ficha(db: Session, ficha: schemas.FichaCreate):
         alumno_id=ficha.alumno_id,
         ciclo_id=ficha.ciclo_id,
         carrera_id=ficha.carrera_id,
+        created_at=ficha.created_at,
+        updated_at=ficha.updated_at,
         configuracion_aspirante_id=ficha.configuracion_aspirante_id
     )
     db.add(db_ficha)
@@ -25,3 +27,7 @@ def create_ficha(db: Session, ficha: schemas.FichaCreate):
     db.refresh(db_ficha)
     return db_ficha
 
+def remove_ficha(db: Session, ficha_id:int):
+    db_ficha = get_ficha(db=db, ficha_id=ficha_id)
+    db.delete(db_ficha)
+    db.commit()

@@ -28,3 +28,11 @@ def read_ficha(ficha_id: int, db: Session = Depends(get_db)):
 def read_fichas(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     fichas = crud.get_fichas(db, skip=skip, limit=limit)
     return fichas
+
+@app.get("/ficha/{ficha_id}", response_model=schemas.Ficha)
+def delete_ficha(ficha_id: int, db: Session = Depends(get_db)):
+    db_ficha = crud.get_ficha(db, ficha_id=ficha_id)
+    if db_ficha is None:
+        raise HTTPException(status_code=404, detail="Ficha not found")
+    crud.remove_ficha(db, ficha_id=ficha_id)
+    return db_ficha
