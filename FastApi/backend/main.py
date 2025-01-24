@@ -1,38 +1,27 @@
-from fastapi import FastAPI, Depends, HTTPException
+from backend.models import fichas_models
+from backend.routes import fichas
+from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
-from . import crud, models, schemas, database
-
-models.Base.metadata.create_all(bind=database.engine)
+from sqlalchemy import text  # Asegúrate de importar text
+from backend.database import get_db, validate_connection
 
 app = FastAPI()
+app.include_router(fichas.router)
+# Validar la conexión al iniciar la aplicación
+validate_connection()
 
-def get_db():
-    db = database.SessionLocal()
+@app.get("/")
+def read_root(db: Session = Depends(get_db)):
     try:
-        yield db
-    finally:
-        db.close()
+        # Realiza una consulta para verificar la conectividad
+        result = db.execute(text("SELECT 1")).fetchall()
+        
+        # Extraer los valores de la consulta como una lista
+        result_list = [row[0] for row in result]  # Convertir el resultado a lista
 
-@app.post("/fichas/", response_model=schemas.Ficha)
-def create_ficha(ficha: schemas.FichaCreate, db: Session = Depends(get_db)):
-    return crud.create_ficha(db=db, ficha=ficha)
+        return {"message": "Conexión exitosa", "result": result_list}
+    except Exception as e:
+        return {"message": f"Error en la conexión: {str(e)}"}
 
-@app.get("/fichas/{ficha_id}", response_model=schemas.Ficha)
-def read_ficha(ficha_id: int, db: Session = Depends(get_db)):
-    db_ficha = crud.get_ficha(db, ficha_id=ficha_id)
-    if db_ficha is None:
-        raise HTTPException(status_code=404, detail="Ficha not found")
-    return db_ficha
 
-@app.get("/fichas/", response_model=list[schemas.Ficha])
-def read_fichas(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    fichas = crud.get_fichas(db, skip=skip, limit=limit)
-    return fichas
 
-@app.get("/ficha/{ficha_id}", response_model=schemas.Ficha)
-def delete_ficha(ficha_id: int, db: Session = Depends(get_db)):
-    db_ficha = crud.get_ficha(db, ficha_id=ficha_id)
-    if db_ficha is None:
-        raise HTTPException(status_code=404, detail="Ficha not found")
-    crud.remove_ficha(db, ficha_id=ficha_id)
-    return db_ficha

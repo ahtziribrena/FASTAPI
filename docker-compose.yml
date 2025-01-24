@@ -29,4 +29,4 @@ services:
     volumes:
       - ./FastApi/backend:/app/backend
     ports:
-      - 8000:8000
+      - 8010:8000

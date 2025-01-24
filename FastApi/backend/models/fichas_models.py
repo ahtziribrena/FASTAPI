@@ -1,6 +1,5 @@
 from sqlalchemy import Column, Integer, String, Date, DateTime
-from .database import Base
-
+from backend.database import Base
 class Ficha(Base):
     __tablename__ = "fichas"
 
