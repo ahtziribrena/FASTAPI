@@ -14,19 +14,30 @@ services:
       start_period: 5s
     ports:
       - 5434:5432
-    profiles:
-      - dev
 
-  proyecto:
+  backend:
     build:
       context: ./FastApi
-      dockerfile: Dockerfile
+      dockerfile: ./backend/Dockerfile
     container_name: FastApi
     depends_on:
-      - database
+      database:
+        condition: service_healthy
     env_file:
       - ./FastApi/proyecto.env
     volumes:
       - ./FastApi/backend:/app/backend
     ports:
       - 8010:8000
+      
+  frontend:
+    build:
+      context: ./FastApi
+      dockerfile: ./frontend/Dockerfile
+    container_name: frontend
+    depends_on:
+      - backend
+    ports:
+      - "8080:3000"
+    environment:
+      - HOST=0.0.0.0
